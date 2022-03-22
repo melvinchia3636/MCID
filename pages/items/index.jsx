@@ -3,10 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
 import Head from 'next/head';
+import Link from 'next/link';
 
 export default function Home() {
   const [data, setData] = useState([]);
   const [query, setQuery] = useState('');
+  const [firstInit, setFirstInit] = useState(true);
   const [displayType, setDisplayType] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -20,10 +22,13 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    document.querySelector('.content').scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
+    if (!firstInit) {
+      document.querySelector('.content').scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }
+    setFirstInit(false);
   }, [currentPage]);
 
   return (
@@ -41,7 +46,9 @@ export default function Home() {
           <br />
           Each item has its own individual page, on which you can find crafting recipes, spawn commands, and useful information about it. For example, the command block page contains information about its block state.
         </p>
-        <button type="button" className="font-medium px-8 py-4 mt-8 border-2 border-neutral-600 tracking-[0.2em]">SORT ITEM IDS BY TYPE</button>
+        <Link href="/items/types" className="w-min">
+          <div className="w-min cursor-pointer whitespace-nowrap font-medium px-8 py-4 mt-8 border-2 border-neutral-600 tracking-[0.2em]">SORT ITEM IDS BY TYPE</div>
+        </Link>
       </div>
       <div className="w-full px-44 content">
         <div className="flex gap-2 w-full mb-4 mt-24">
