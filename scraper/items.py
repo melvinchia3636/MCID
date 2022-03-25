@@ -27,7 +27,7 @@ for i in categories:
 	for i in range(1, page+1):
 		raw = requests.get('https://minecraftitemids.com'+link+'/'+str(i)).content
 		soup = BeautifulSoup(raw, 'lxml')
-		items = [i.select('td') for i in soup.select("table.rd-table tr") if i.select('td')]
+		items = [i.select('td') for i in soup.select("table.rd-table tr") if i.select('td')][1:]
 
 		for image, item_name, item_id, legacy_item_id, numeral_id in items:
 			image = image.select_one('img')['src'] if image.select_one('img') else None
