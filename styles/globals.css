@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Proxima Nova";
+  src: url(./Proxima.otf) format('opentype');
+}
+
 html, body {
 scroll-behavior: smooth;
 }
@@ -9,4 +14,11 @@ scroll-behavior: smooth;
 * {
   font-family: "Proxima Nova";
   letter-spacing: 0.1em;
+}
+
+*:focus, *:active {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
 }

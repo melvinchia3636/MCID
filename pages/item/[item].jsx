@@ -2,7 +2,8 @@
 /* eslint-disable react/prop-types */
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
+import copy from 'copy-to-clipboard';
 
 export const getStaticPaths = async () => ({
   paths: [], // indicates that no page needs be created at build time
@@ -19,6 +20,8 @@ export async function getStaticProps(context) {
 }
 
 function ItemID({ data }) {
+  const [isCopied, setCopied] = useState(false);
+
   return (
     <div className="border-2 border-neutral-600 p-6 flex flex-col">
       <div className="flex items-center -ml-1 uppercase gap-2 font-semibold text-lg mb-6">
@@ -36,13 +39,25 @@ function ItemID({ data }) {
         <div className="p-4 whitespace-nowrap overflow-x-auto">
           {data.item_id}
         </div>
-        <button type="button" className="px-6 bg-neutral-600 text-white uppercase font-semibold text-sm h-full flex items-center justify-center">copy</button>
+        <button
+          type="button"
+          onClick={() => {
+            copy(data.item_id);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1000);
+          }}
+          className="px-6 pt-1 -mr-0.5 -mt-0.5 bg-neutral-600 text-white uppercase font-semibold text-sm h-[105%] flex items-center justify-center"
+        >
+          {isCopied ? 'copied' : 'copy'}
+        </button>
       </div>
     </div>
   );
 }
 
 function SpawnCommand({ data }) {
+  const [isCopied, setCopied] = useState(false);
+
   return (
     <div className="border-2 border-neutral-600 p-6 flex flex-col">
       <div className="flex items-center -ml-1 uppercase gap-2 font-semibold text-lg mb-6">
@@ -64,7 +79,17 @@ function SpawnCommand({ data }) {
           {' '}
           1
         </div>
-        <button type="button" className="px-6 bg-neutral-600 text-white uppercase font-semibold text-sm h-full flex items-center justify-center">copy</button>
+        <button
+          type="button"
+          onClick={() => {
+            copy(`/give @p ${data.item_id} 1`);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1000);
+          }}
+          className="px-6 pt-1 -mr-0.5 -mt-0.5 bg-neutral-600 text-white uppercase font-semibold text-sm h-[105%] flex items-center justify-center"
+        >
+          {isCopied ? 'copied' : 'copy'}
+        </button>
       </div>
     </div>
   );
@@ -77,17 +102,25 @@ function ItemInfo({ data }) {
         <Icon icon="uil:info-circle" className="w-7 h-7 -mt-0.5" />
         Item Information
       </div>
-      <h2 className="uppercase font-semibold text-sm">Description</h2>
-      <div className="mt-2">{data.description}</div>
-      <h2 className="uppercase font-semibold text-sm mt-6">Properties</h2>
-      <div className="divide-y divide-neutral-500 flex flex-col">
-        {Object.entries(data.properties).map(([k, v]) => (
-          <div className="flex items-center py-4 gap-8">
-            <div className="font-medium w-1/2">{k}</div>
-            <div className="w-1/2">{v}</div>
-          </div>
-        ))}
-      </div>
+      {data.description && (
+      <>
+        <h2 className="uppercase font-semibold text-sm">Description</h2>
+        <div className="mt-2">{data.description}</div>
+      </>
+      )}
+      {JSON.stringify(data.properties) !== '{}' && (
+      <>
+        <h2 className="uppercase font-semibold text-sm mt-6">Properties</h2>
+        <div className="divide-y divide-neutral-500 flex flex-col">
+          {Object.entries(data.properties).map(([k, v]) => (
+            <div className="flex items-center py-4 gap-8">
+              <div className="font-medium w-1/2">{k}</div>
+              <div className="w-1/2">{v}</div>
+            </div>
+          ))}
+        </div>
+      </>
+      )}
     </div>
   );
 }
@@ -204,7 +237,7 @@ function Item({ data }) {
   const router = useRouter();
 
   return (
-    <div className="w-full h-screen flex flex-col overflow-y-auto bg-neutral-100 text-neutral-600 py-56 px-44">
+    <div className="w-full h-screen flex flex-col overflow-y-auto bg-neutral-100 text-neutral-600 py-16 md:py-56 px-8 md:px-44">
       <div className="flex flex-col gap-4 mb-12">
         <button type="button" onClick={() => router.back()} className="text-sm cursor-pointer font-semibold mb-2 tracking-[0.2em] uppercase flex items-center gap-1">
           <Icon icon="uil:arrow-left" className="w-5 h-5" />
@@ -217,15 +250,15 @@ function Item({ data }) {
           <h1 className="font-semibold text-2xl">{data.name}</h1>
         </div>
       </div>
-      <div className="w-full gap-4 flex">
-        <div className="flex-1 h-min max-w-[50%] flex flex-col gap-4">
+      <div className="w-full gap-4 flex flex-col xl:flex-row">
+        <div className="flex-1 h-min w-full xl:max-w-[50%] flex flex-col gap-4">
           <ItemID data={data} />
           <SpawnCommand data={data} />
           {data.mining.length > 0 && <MiningTools data={data} />}
           {JSON.stringify(data.blockstates) !== '{}' && <BlockStates data={data} />}
         </div>
-        <div className="flex-1 h-min max-w-[50%] flex flex-col gap-4">
-          <ItemInfo data={data} />
+        <div className="flex-1 h-min w-full xl:max-w-[50%] flex flex-col gap-4">
+          {(data.description || JSON.stringify(data.properties) !== '{}') && <ItemInfo data={data} />}
           {data.recipies.length > 0 && <Recipies data={data} />}
         </div>
       </div>
