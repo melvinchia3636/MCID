@@ -29,12 +29,10 @@ function Types({ data }) {
   return (
     <div className="w-full h-screen flex items-center overflow-y-auto bg-neutral-100 text-neutral-600 flex-col py-56">
       <div className="px-44 w-full">
-        <Link href="/items/types" className="w-min">
-          <div className="text-sm cursor-pointer font-semibold mb-7 tracking-[0.2em] uppercase flex items-center gap-1">
-            <Icon icon="uil:arrow-left" className="w-5 h-5" />
-            Go Back
-          </div>
-        </Link>
+        <button type="button" onClick={() => router.back()} className="text-sm cursor-pointer font-semibold mb-7 tracking-[0.2em] uppercase flex items-center gap-1">
+          <Icon icon="uil:arrow-left" className="w-5 h-5" />
+          Go Back
+        </button>
         <h1 className="text-4xl uppercase tracking-[0.325em]">
           Minecraft
           {' '}
@@ -79,15 +77,17 @@ function Types({ data }) {
       {displayType === 0 ? (
         <div className="divide-y divide-neutral-600 w-full px-44">
           {data.items.filter((e) => !query || e.name.toLowerCase().includes(query.toLowerCase())).map((e) => (
-            <div className="flex p-4 gap-12 items-center">
-              <div className="w-16 h-8 flex items-center justify-center">
-                {e.image && <img alt="" src={`https://minecraftitemids.com${e.image}`} />}
+            <Link href={`/item/${e.name.toLowerCase().replace(/\s/g, '-')}`}>
+              <div className="flex p-4 gap-12 items-center hover:bg-neutral-200 hover:bg-opacity-50 cursor-pointer transition-all duration-300">
+                <div className="w-16 h-8 flex items-center justify-center">
+                  {e.image && <img alt="" src={`https://minecraftitemids.com${e.image}`} />}
+                </div>
+                <div className="w-1/4 font-semibold">{e.name}</div>
+                <div className="w-1/4 break-all">{e.item_id}</div>
+                <div className="w-1/4 break-all">{e.legacy_item_id}</div>
+                <div className="w-1/4 break-all">{e.numeral_id}</div>
               </div>
-              <div className="w-1/4 font-semibold">{e.name}</div>
-              <div className="w-1/4 break-all">{e.item_id}</div>
-              <div className="w-1/4 break-all">{e.legacy_item_id}</div>
-              <div className="w-1/4 break-all">{e.numeral_id}</div>
-            </div>
+            </Link>
           ))}
         </div>
       ) : (
@@ -98,32 +98,34 @@ function Types({ data }) {
                 .toLowerCase()
                 .includes(query.toLowerCase()))
               .map((e) => (
-                <li className="p-6 gap-8 items-center border-2 border-neutral-600 justify-between">
-                  <div className="flex items-center justify-between w-full gap-8">
-                    <div className="text-xl font-semibold">{e.name}</div>
-                    <div className="h-12 w-12 flex items-center justify-center">
-                      {e.image && <img alt="" className="w-full h-full object-contain" src={`https://minecraftitemids.com${e.image.replace('32', '64')}`} />}
+                <Link href={`/item/${e.name.toLowerCase().replace(/\s/g, '-')}`}>
+                  <li className="p-6 gap-8 items-center border-2 border-neutral-600 justify-between hover:bg-neutral-200 hover:bg-opacity-50 cursor-pointer transition-all duration-300">
+                    <div className="flex items-center justify-between w-full gap-8">
+                      <div className="text-xl font-semibold">{e.name}</div>
+                      <div className="h-12 w-12 flex items-center justify-center">
+                        {e.image && <img alt="" className="w-full h-full object-contain" src={`https://minecraftitemids.com${e.image.replace('32', '64')}`} />}
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-full flex flex-col gap-4 mt-8">
-                    <div className="flex w-full">
-                      <p className="text-xs font-semibold uppercase whitespace-nowrap w-36 flex-shrink-0">Item id</p>
-                      <div className="break-all -mt-[0.25rem]">{e.item_id}</div>
-                    </div>
-                    {e.legacy_item_id && (
+                    <div className="w-full flex flex-col gap-4 mt-8">
+                      <div className="flex w-full">
+                        <p className="text-xs font-semibold uppercase whitespace-nowrap w-36 flex-shrink-0">Item id</p>
+                        <div className="break-all -mt-[0.25rem]">{e.item_id}</div>
+                      </div>
+                      {e.legacy_item_id && (
                       <div className="flex w-full">
                         <p className="text-xs font-semibold uppercase whitespace-nowrap w-36 flex-shrink-0">Legacy Item id</p>
                         <div className="break-all -mt-[0.25rem]">{e.legacy_item_id}</div>
                       </div>
-                    )}
-                    {e.numeral_id && (
+                      )}
+                      {e.numeral_id && (
                       <div className="flex w-full">
                         <p className="text-xs font-semibold uppercase whitespace-nowrap w-36 flex-shrink-0">Numeral id</p>
                         <div className="break-all -mt-[0.25rem]">{e.numeral_id}</div>
                       </div>
-                    )}
-                  </div>
-                </li>
+                      )}
+                    </div>
+                  </li>
+                </Link>
               ))}
           </ul>
         </div>

@@ -37,7 +37,7 @@ export default function Home() {
         <title>Minecraft Item ID List</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <div className="px-44 w-full">
+      <div className="px-8 md:px-44 w-full">
         <p className="mb-2">The world&apos;s favorite complete, up-to-date 1.18</p>
         <h1 className="text-4xl uppercase tracking-[0.325em]">Minecraft Item ID List</h1>
         <p className="mt-6">
@@ -46,11 +46,13 @@ export default function Home() {
           <br />
           Each item has its own individual page, on which you can find crafting recipes, spawn commands, and useful information about it. For example, the command block page contains information about its block state.
         </p>
-        <Link href="/items/types" className="w-min">
-          <div className="w-min cursor-pointer whitespace-nowrap font-medium px-8 py-4 mt-8 border-2 border-neutral-600 tracking-[0.2em]">SORT ITEM IDS BY TYPE</div>
-        </Link>
+        <div className="flex">
+          <Link href="/items/types">
+            <div className="cursor-pointer text-center font-medium px-8 py-4 mt-8 border-2 border-neutral-600 tracking-[0.2em]">SORT ITEM IDS BY TYPE</div>
+          </Link>
+        </div>
       </div>
-      <div className="w-full px-44 content">
+      <div className="w-full px-8 md:px-44 content">
         <div className="flex gap-2 w-full mb-4 mt-24">
           <div className="border-2 border-neutral-600 p-4 flex items-center justify-center gap-4">
             <button type="button" onClick={() => setDisplayType(0)}>
@@ -60,38 +62,44 @@ export default function Home() {
               <Icon icon="akar-icons:grid" className={`w-7 h-7 ${displayType !== 1 ? 'text-neutral-400' : ''}`} />
             </button>
           </div>
-          <div className="border-2 border-neutral-600 w-full p-4 gap-4 flex items-center">
+          <div className="hidden lg:flex border-2 border-neutral-600 w-full p-4 gap-4 items-center">
             <Icon icon="akar-icons:search" className="w-7 h-7" />
             <input onChange={(e) => setQuery(e.target.value)} className="w-full bg-transparent text-neutral-600 placeholder-neutral-600 text-lg focus:outline-none" type="text" placeholder="Search for an item" />
           </div>
-          <div className="border-2 border-neutral-600 p-4 flex items-center justify-center gap-4 font-semibold text-lg">
+          <div className="border-2 border-neutral-600 p-4 w-full lg:w-auto flex items-center justify-center gap-4 font-semibold text-lg">
             <Icon icon="uil:filter" className="w-7 h-7" />
             Filter
             <Icon icon="uil:angle-down" className="w-7 h-7" />
           </div>
         </div>
+        <div className="lg:hidden border-2 border-neutral-600 w-full p-4 mb-4 gap-4 flex items-center">
+          <Icon icon="akar-icons:search" className="w-7 h-7" />
+          <input onChange={(e) => setQuery(e.target.value)} className="w-full bg-transparent text-neutral-600 placeholder-neutral-600 text-lg focus:outline-none" type="text" placeholder="Search for an item" />
+        </div>
         {displayType === 0 && (
-        <div className="flex p-4 gap-12 items-center uppercase border-b-2 border-neutral-600">
-          <div className="w-16 font-semibold text-sm flex items-center justify-center">image</div>
-          <div className="w-1/4 font-semibold text-sm">name</div>
-          <div className="w-1/4 font-semibold text-sm">item id</div>
-          <div className="w-1/4 font-semibold text-sm">legacy item id</div>
-          <div className="w-1/4 font-semibold text-sm">numeral item id</div>
+        <div className="flex flex-wrap lg:flex-nowrap p-4 gap-y-4 gap-x-8 lg:gap-12 uppercase border-b-2 border-neutral-600">
+          <div className="w-16 font-semibold text-sm flex">image</div>
+          <div className="w-auto lg:w-1/4 font-semibold text-sm">name</div>
+          <div className="w-auto lg:w-1/4 font-semibold text-sm">item id</div>
+          <div className="w-auto lg:w-1/4 font-semibold text-sm">legacy item id</div>
+          <div className="w-auto lg:w-1/4 font-semibold text-sm">numeral item id</div>
         </div>
         )}
       </div>
       {displayType === 0 ? (data.length > 0 ? (
-        <div className="divide-y divide-neutral-600 w-full px-44">
+        <div className="divide-y divide-neutral-600 w-full px-8 md:px-44">
           {data.filter((e) => !query || e.name.toLowerCase().includes(query.toLowerCase())).slice(query ? 0 : currentPage * 60, query ? data.length : currentPage * 60 + 60).map((e) => (
-            <div className="flex p-4 gap-12 items-center">
-              <div className="w-16 h-8 flex items-center justify-center">
-                {e.image && <img alt="" src={`https://minecraftitemids.com${e.image}`} />}
+            <Link href={`/item/${e.name.toLowerCase().replace(/\s/g, '-')}`}>
+              <div className="flex flex-wrap lg:flex-nowrap p-4 gap-4 lg:gap-12 items-center hover:bg-neutral-200 hover:bg-opacity-50 cursor-pointer transition-all duration-300">
+                <div className="w-16 h-8 flex items-center justify-center">
+                  {e.image && <img alt="" src={`https://minecraftitemids.com${e.image}`} />}
+                </div>
+                <div className="w-full lg:w-1/4 font-semibold cursor-pointer">{e.name}</div>
+                <div className="w-full lg:w-1/4 break-all">{e.item_id}</div>
+                <div className="w-full lg:w-1/4 break-all">{e.legacy_item_id}</div>
+                <div className="w-full lg:w-1/4 break-all">{e.numeral_id}</div>
               </div>
-              <div className="w-1/4 font-semibold">{e.name}</div>
-              <div className="w-1/4 break-all">{e.item_id}</div>
-              <div className="w-1/4 break-all">{e.legacy_item_id}</div>
-              <div className="w-1/4 break-all">{e.numeral_id}</div>
-            </div>
+            </Link>
           ))}
         </div>
       ) : 'Loading...'
@@ -104,32 +112,34 @@ export default function Home() {
                 .includes(query.toLowerCase()))
               .slice(query ? 0 : currentPage * 60, query ? data.length : currentPage * 60 + 60)
               .map((e) => (
-                <li className="p-6 gap-8 items-center border-2 border-neutral-600 justify-between">
-                  <div className="flex items-center justify-between w-full gap-8">
-                    <div className="text-xl font-semibold">{e.name}</div>
-                    <div className="h-12 w-12 flex items-center justify-center">
-                      {e.image && <img alt="" className="w-full h-full object-contain" src={`https://minecraftitemids.com${e.image.replace('32', '64')}`} />}
+                <Link href={`/item/${e.name.toLowerCase().replace(/\s/g, '-')}`}>
+                  <li className="p-6 gap-8 items-center border-2 border-neutral-600 justify-between hover:bg-neutral-200 hover:bg-opacity-50 cursor-pointer transition-all duration-300">
+                    <div className="flex items-center justify-between w-full gap-8">
+                      <div className="text-xl font-semibold">{e.name}</div>
+                      <div className="h-12 w-12 flex items-center justify-center">
+                        {e.image && <img alt="" className="w-full h-full object-contain" src={`https://minecraftitemids.com${e.image.replace('32', '64')}`} />}
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-full flex flex-col gap-4 mt-8">
-                    <div className="flex w-full">
-                      <p className="text-xs font-semibold uppercase whitespace-nowrap w-36 flex-shrink-0">Item id</p>
-                      <div className="break-all -mt-[0.25rem]">{e.item_id}</div>
-                    </div>
-                    {e.legacy_item_id && (
+                    <div className="w-full flex flex-col gap-4 mt-8">
+                      <div className="flex w-full">
+                        <p className="text-xs font-semibold uppercase whitespace-nowrap w-36 flex-shrink-0">Item id</p>
+                        <div className="break-all -mt-[0.25rem]">{e.item_id}</div>
+                      </div>
+                      {e.legacy_item_id && (
                       <div className="flex w-full">
                         <p className="text-xs font-semibold uppercase whitespace-nowrap w-36 flex-shrink-0">Legacy Item id</p>
                         <div className="break-all -mt-[0.25rem]">{e.legacy_item_id}</div>
                       </div>
-                    )}
-                    {e.numeral_id && (
+                      )}
+                      {e.numeral_id && (
                       <div className="flex w-full">
                         <p className="text-xs font-semibold uppercase whitespace-nowrap w-36 flex-shrink-0">Numeral id</p>
                         <div className="break-all -mt-[0.25rem]">{e.numeral_id}</div>
                       </div>
-                    )}
-                  </div>
-                </li>
+                      )}
+                    </div>
+                  </li>
+                </Link>
               ))}
           </ul>
         </div>

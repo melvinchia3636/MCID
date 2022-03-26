@@ -5,6 +5,7 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 export async function getStaticProps() {
   const data = await fetch('http://localhost:3000/api/items/types/all').then((res) => res.json());
@@ -17,6 +18,8 @@ export async function getStaticProps() {
 }
 
 export default function Types({ data }) {
+  const router = useRouter();
+
   return (
     <div className="w-full h-screen flex items-center overflow-y-auto bg-neutral-100 text-neutral-600 flex-col py-56">
       <Head>
@@ -24,12 +27,10 @@ export default function Types({ data }) {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <div className="px-44 w-full">
-        <Link href="/items" className="w-min">
-          <div className="text-sm cursor-pointer font-semibold mb-7 tracking-[0.2em] uppercase flex items-center gap-1">
-            <Icon icon="uil:arrow-left" className="w-5 h-5" />
-            Go Back
-          </div>
-        </Link>
+        <button type="button" onClick={() => router.back()} className="text-sm cursor-pointer font-semibold mb-7 tracking-[0.2em] uppercase flex items-center gap-1">
+          <Icon icon="uil:arrow-left" className="w-5 h-5" />
+          Go Back
+        </button>
         <h1 className="text-4xl uppercase tracking-[0.325em]">Sort Item IDs By Type</h1>
         <p className="mt-6">
           Find below links to lists of Minecraft items sorted by their type.

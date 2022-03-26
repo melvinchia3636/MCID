@@ -35,8 +35,7 @@ for index, i in enumerate([i['name'].lower().replace(' ', '-') for i in data]):
       ingridient = [i.text.split('x ', 1) for i in incridient.select('li')]
       ingridient = {i[1]: int(i[0]) for i in ingridient}
 
-      pattern = [i.select_one('img')['alt'] if i.select_one('img') else -1 for i in pattern.select('.crafting-table > div')]
-      pattern = [list(ingridient.keys()).index(i) if i != -1 else -1 for i in pattern]
+      pattern = [i.select_one('img')['src'].split('.')[0].split('/')[-1] if i.select_one('img') else '' for i in pattern.select('.crafting-table > div')]
       
       result = result.text.split('x ', 1)
       result = {result[1]: int(result[0])}
