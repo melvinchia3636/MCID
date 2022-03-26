@@ -23,7 +23,7 @@ export default function Types({ data }) {
   return (
     <div className="w-full h-screen flex items-center overflow-y-auto bg-neutral-100 text-neutral-600 flex-col py-16 md:py-56">
       <Head>
-        <title>Minecraft Item ID List</title>
+        <title>Minecraft Item ID List - Type Index</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <div className="px-8 md:px-44 w-full">

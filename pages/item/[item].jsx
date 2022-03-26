@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import copy from 'copy-to-clipboard';
+import Head from 'next/head';
 
 export const getStaticPaths = async () => ({
   paths: [], // indicates that no page needs be created at build time
@@ -238,6 +239,14 @@ function Item({ data }) {
 
   return (
     <div className="w-full h-screen flex flex-col overflow-y-auto bg-neutral-100 text-neutral-600 py-16 md:py-56 px-8 md:px-44">
+      <Head>
+        <title>
+          Minecraft Item ID List -
+          {' '}
+          {data.name}
+        </title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <div className="flex flex-col gap-4 mb-12">
         <button type="button" onClick={() => router.back()} className="text-sm cursor-pointer font-semibold mb-2 tracking-[0.2em] uppercase flex items-center gap-1">
           <Icon icon="uil:arrow-left" className="w-5 h-5" />
