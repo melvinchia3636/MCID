@@ -6,13 +6,20 @@ import { Icon } from '@iconify/react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { MongoClient } from 'mongodb';
 
 export async function getStaticProps() {
-  const data = await fetch('http://localhost:3000/api/items/types/all').then((res) => res.json());
-  const d = data.map((e) => ({ ...e, _id: null }));
+  const db = await MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+  const database = db.db('mcid');
+  const items = await database.collection('types').find({}).toArray();
+  db.close();
   return {
     props: {
-      data: d,
+      data: items.map((e) => ({
+        ...e,
+        _id: null,
+        items: null,
+      })),
     },
   };
 }

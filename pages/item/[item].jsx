@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 import { Icon } from '@iconify/react';
@@ -5,6 +6,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import copy from 'copy-to-clipboard';
 import Head from 'next/head';
+import { MongoClient } from 'mongodb';
 
 export const getStaticPaths = async () => ({
   paths: [], // indicates that no page needs be created at build time
@@ -12,10 +14,20 @@ export const getStaticPaths = async () => ({
 });
 
 export async function getStaticProps(context) {
-  const data = await fetch(`http://localhost:3000/api/item/${context.params.item}`).then((res) => res.json());
+  const db = await MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+  const database = db.db('mcid');
+  const name = context.params.item.split('-').join(' ').toLowerCase().replace('(', '\\(')
+    .replace(')', '\\)');
+  const regex = new RegExp(['^', name, '$'].join(''), 'i');
+  const items = await database.collection('items').find({
+    name: regex,
+  }).toArray();
+  items[0]._id = null;
+  db.close();
+
   return {
     props: {
-      data,
+      data: items[0],
     },
   };
 }

@@ -1,25 +1,33 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { MongoClient } from 'mongodb';
 
-export default function Home() {
-  const [data, setData] = useState([]);
+export async function getStaticProps() {
+  const db = await MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+  const database = db.db('mcid');
+  const items = await database.collection('items').find({}).toArray();
+  db.close();
+
+  return {
+    props: {
+      data: items.map((e) => ({
+        ...e,
+        _id: null,
+      })),
+    },
+  };
+}
+
+export default function Home({ data }) {
   const [query, setQuery] = useState('');
   const [firstInit, setFirstInit] = useState(true);
   const [displayType, setDisplayType] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
-
-  useEffect(() => {
-    fetch('/api/items/all')
-      .then((res) => res.json())
-      .then((res) => {
-        const d = res.map((e) => ({ ...e, _id: undefined }));
-        setData(d);
-      });
-  }, []);
 
   useEffect(() => {
     if (!firstInit) {

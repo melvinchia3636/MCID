@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable react/prop-types */
@@ -6,6 +7,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import Head from 'next/head';
+import { MongoClient } from 'mongodb';
 
 export const getStaticPaths = async () => ({
   paths: [], // indicates that no page needs be created at build time
@@ -13,10 +15,26 @@ export const getStaticPaths = async () => ({
 });
 
 export async function getStaticProps(context) {
-  const data = await fetch(`http://localhost:3000/api/items/types/${context.params.type}`).then((res) => res.json());
+  const db = await MongoClient.connect(process.env.MONGODB_URI, { useNewUrlParser: true });
+  const database = db.db('mcid');
+  const items = await database.collection('types').find({
+    name: context.params.type.split('-').map((e) => e[0].toUpperCase() + e.slice(1)).join(' '),
+  }).toArray();
+  items[0].items = await database.collection('items').find({
+    _id: {
+      $in: items[0].items,
+    },
+  }).toArray();
+  items[0]._id = null;
+  items[0].items = items[0].items.map((e) => ({
+    ...e,
+    _id: null,
+  }));
+  db.close();
+
   return {
     props: {
-      data,
+      data: items[0],
     },
   };
 }
