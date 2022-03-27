@@ -34,35 +34,79 @@ export async function getStaticProps(context) {
 
 function ItemID({ data }) {
   const [isCopied, setCopied] = useState(false);
+  const [section, setSection] = useState(0);
 
   return (
-    <div className="border-2 border-neutral-600 p-6 flex flex-col">
-      <div className="flex items-center -ml-1 uppercase gap-2 font-semibold text-lg mb-6">
-        <Icon icon="uil:tag-alt" className="w-7 h-7 -mt-0.5" />
-        Item ID
+    <div>
+      <div className="divide-x-2 border-2 mb-4 flex border-neutral-600 divide-neutral-600">
+        {['item id', 'legacy item id', 'numerical id'].map((e, i) => ([data.item_id, data.legacy_item_id, data.numeral_id][i] ? <button type="button" onClick={() => setSection(i)} className={`p-4 font-semibold text-sm uppercase transition-all duration-300 flex-1 ${section === i ? 'bg-neutral-600 text-neutral-100' : 'hover:bg-neutral-600 hover:text-neutral-100'}`}>{e}</button> : null))}
       </div>
-      <p>
-        Each item in Minecraft has a unique ID assigned to it, known as an item ID, this can be used in commands to spawn the item into the game. The item ID for
-        {' '}
-        {data.name.toLowerCase()}
-        {' '}
-        in Minecraft is shown below:
-      </p>
-      <div className="w-full border-2 flex justify-between h-16 border-neutral-600 mt-6 text-lg">
-        <div className="p-4 whitespace-nowrap overflow-x-auto">
-          {data.item_id}
+      <div className="border-2 border-neutral-600 p-6 flex flex-col">
+        <div className="flex items-center -ml-1 uppercase gap-2 font-semibold text-lg mb-6">
+          <Icon icon="uil:tag-alt" className="w-7 h-7 -mt-0.5" />
+          {['Item ID', 'Item ID (Versions 1.12.2 and Below)', 'Numerical ID'][section]}
         </div>
-        <button
-          type="button"
-          onClick={() => {
-            copy(data.item_id);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1000);
-          }}
-          className="px-6 pt-1 -mr-0.5 -mt-0.5 bg-neutral-600 text-white uppercase font-semibold text-sm h-[105%] flex items-center justify-center"
-        >
-          {isCopied ? 'copied' : 'copy'}
-        </button>
+        <p>
+          {[
+            <>
+              Each item in Minecraft has a unique ID assigned to it, known as an item ID, this can be used in commands to spawn the item into the game. The item ID for
+              {' '}
+              {data.name.toLowerCase()}
+              {' '}
+              in Minecraft is shown below:
+            </>,
+            <>
+              When Minecraft updated to version 1.13, a changed dubbed &quot;The Flattening&quot; was introduced. In &quot;The Flattening&quot;, numerical IDs and item data was removed, and some item IDs were changed to make them more logical - Stripped Oak Wood was one of the many items that had their IDs changed.
+              <br />
+              <br />
+              For this reason, if you&apos;re playing on a Minecraft version below 1.13 (1.12, 1.8, 1.7), you should use what we&apos;ve named a legacy ID for this item. The legacy ID for
+              {' '}
+              {data.name.toLowerCase()}
+              {' '}
+              is:
+              <br />
+              <br />
+              {data.name}
+              {' '}
+              has a data value of
+              {' '}
+              <span className="font-semibold">{data.numeral_id?.split(':')[1] || 0}</span>
+              . You will need to add this to commands, along with its legacy item ID (below), to spawn it.
+            </>,
+            <>
+              Items from earlier versions of Minecraft were assigned a numerical ID - a unique number to represent it.
+              <br />
+              <br />
+              This item also has a data value assigned to it. The data value is
+              {' '}
+              <span className="font-semibold">{data.numeral_id?.split(':')[1] || 0}</span>
+              {' '}
+              - you need to add this to the item ID (with a colon before) in order to spawn jungle log.
+              <br />
+              <br />
+              The numerical ID for
+              {' '}
+              {data.name}
+              {' '}
+              is:
+            </>][section]}
+        </p>
+        <div className="w-full border-2 flex justify-between h-16 border-neutral-600 mt-6 text-lg">
+          <div className="p-4 whitespace-nowrap overflow-x-auto">
+            {[data.item_id, data.legacy_item_id, data.numeral_id][section]}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              copy([data.item_id, data.legacy_item_id, data.numeral_id][section]);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1000);
+            }}
+            className="px-6 pt-1 -mr-0.5 -mt-0.5 bg-neutral-600 text-white uppercase font-semibold text-sm h-[105%] flex items-center justify-center"
+          >
+            {isCopied ? 'copied' : 'copy'}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -121,19 +165,20 @@ function ItemInfo({ data }) {
         <div className="mt-2">{data.description}</div>
       </>
       )}
-      {JSON.stringify(data.properties) !== '{}' && (
-      <>
-        <h2 className="uppercase font-semibold text-sm mt-6">Properties</h2>
-        <div className="divide-y divide-neutral-500 flex flex-col">
-          {Object.entries(data.properties).map(([k, v]) => (
-            <div className="flex items-center py-4 gap-8">
-              <div className="font-medium w-1/2">{k}</div>
-              <div className="w-1/2">{v}</div>
-            </div>
-          ))}
-        </div>
-      </>
-      )}
+      <h2 className="uppercase font-semibold text-sm mt-6">Properties</h2>
+      <div className="divide-y divide-neutral-500 flex flex-col">
+        {Object.entries({
+          'Item ID': data.item_id,
+          'Legacy Item ID (1.12.2 and Below)': data.legacy_item_id,
+          'Numerical ID': data.numeral_id,
+          ...data.properties,
+        }).map(([k, v]) => (
+          <div className="flex items-center py-4 gap-8">
+            <div className="font-medium w-1/2">{k}</div>
+            <div className="w-1/2">{v}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -279,7 +324,7 @@ function Item({ data }) {
           {JSON.stringify(data.blockstates) !== '{}' && <BlockStates data={data} />}
         </div>
         <div className="flex-1 h-min w-full xl:max-w-[50%] flex flex-col gap-4">
-          {(data.description || JSON.stringify(data.properties) !== '{}') && <ItemInfo data={data} />}
+          <ItemInfo data={data} />
           {data.recipies.length > 0 && <Recipies data={data} />}
         </div>
       </div>
