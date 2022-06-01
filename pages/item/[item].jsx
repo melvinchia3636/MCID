@@ -175,7 +175,7 @@ function ItemInfo({ data }) {
         }).map(([k, v]) => (
           <div className="flex items-center py-4 gap-8">
             <div className="font-medium w-1/2">{k}</div>
-            <div className="w-1/2">{v}</div>
+            <div className="w-1/2 break-all">{v}</div>
           </div>
         ))}
       </div>
