@@ -92,7 +92,7 @@ export default function Home({ data }) {
       {displayType === 0 ? (data.length > 0 ? (
         <div className="divide-y divide-neutral-600 w-full px-8 md:px-44">
           {data.filter((e) => !query || e.name.toLowerCase().includes(query.toLowerCase())).slice(query ? 0 : currentPage * 60, query ? data.length : currentPage * 60 + 60).map((e) => (
-            <Link href={`/item/${e.name.toLowerCase().replace(/\s/g, '-')}`}>
+            <Link key={e.name} href={`/item/${e.name.toLowerCase().replace(/\s/g, '-')}`}>
               <div className="flex flex-wrap lg:flex-nowrap p-4 gap-4 lg:gap-12 items-center hover:bg-neutral-200 hover:bg-opacity-50 cursor-pointer transition-all duration-300">
                 <div className="w-16 h-8 flex items-center justify-center">
                   {e.image && <img alt="" src={`https://minecraftitemids.com${e.image}`} />}
@@ -114,7 +114,7 @@ export default function Home({ data }) {
               .includes(query.toLowerCase()))
             .slice(query ? 0 : currentPage * 60, query ? data.length : currentPage * 60 + 60)
             .map((e) => (
-              <Link href={`/item/${e.name.toLowerCase().replace(/\s/g, '-')}`}>
+              <Link key={e.name} href={`/item/${e.name.toLowerCase().replace(/\s/g, '-')}`}>
                 <li className="p-6 gap-8 items-center border-2 border-neutral-600 justify-between hover:bg-neutral-200 hover:bg-opacity-50 cursor-pointer transition-all duration-300">
                   <div className="flex items-center justify-between w-full gap-8">
                     <div className="text-xl font-semibold">{e.name}</div>
